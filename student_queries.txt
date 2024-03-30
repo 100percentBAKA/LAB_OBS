@@ -1,0 +1,143 @@
+create table tbl_student (
+usn integer primary key,
+name varchar(100) not null,
+address varchar(100) not null,
+phone varchar(12) not null unique,
+gender varchar(2) not null
+);
+
+create table tbl_sem (
+ssid varchar(100) not null unique primary key,
+sem integer,
+sec varchar(10) not null
+);
+
+create table tbl_class (
+usn integer,
+ssid varchar(100)
+);
+
+create table tbl_subject (
+code varchar(20) not null unique primary key,
+title varchar(100) not null,
+sem integer,
+credits integer
+);
+
+create table tbl_marks (
+usn integer,
+code varchar(20),
+ssid varchar(100),
+test1 integer,
+test2 integer,
+test3 integer,
+finalMarks integer
+);
+
+alter table tbl_class 
+add constraint fk_1
+foreign key(usn) references tbl_student (usn)
+on delete cascade
+on update cascade;
+
+alter table tbl_class 
+add constraint fk_2
+foreign key(ssid) references tbl_sem (ssid)
+on delete cascade
+on update cascade;
+
+alter table tbl_marks 
+add constraint fk_3
+foreign key(usn) references tbl_student (usn)
+on delete cascade
+on update cascade;
+
+alter table tbl_marks 
+add constraint fk_4
+foreign key(ssid) references tbl_sem (ssid)
+on delete cascade
+on update cascade;
+
+alter table tbl_marks 
+add constraint fk_5
+foreign key(code) references tbl_subject (code)
+on delete cascade
+on update cascade;
+
+INSERT INTO tbl_student (usn, name, address, phone, gender) VALUES
+(1, 'Alice Smith', '123 Elm St', '555-0001', 'F'),
+(2, 'Bob Jones', '456 Oak St', '555-0002', 'M'),
+(3, 'Carol Brown', '789 Pine St', '555-0003', 'F'),
+(4, 'Dave Wilson', '101 Maple St', '555-0004', 'M'),
+(5, 'Eve Davis', '202 Birch St', '555-0005', 'F'),
+(6, 'Frank Green', '303 Cedar St', '555-0006', 'M'),
+(7, 'Grace Hall', '404 Ash St', '555-0007', 'F'),
+(8, 'Henry Adams', '505 Cherry St', '555-0008', 'M'),
+(9, 'Ivy Brooks', '606 Dogwood St', '555-0009', 'F'),
+(10, 'Jack Clark', '707 Elm St', '555-0010', 'M');
+
+INSERT INTO tbl_sem (ssid, sem, sec) VALUES
+('SS1', 1, 'A'),
+('SS2', 1, 'B'),
+('SS3', 2, 'A'),
+('SS4', 2, 'B'),
+('SS5', 3, 'A'),
+('SS6', 3, 'B'),
+('SS7', 4, 'A'),
+('SS8', 4, 'B'),
+('SS9', 5, 'A'),
+('SS10', 5, 'B');
+
+INSERT INTO tbl_class (usn, ssid) VALUES
+(1, 'SS1'),
+(2, 'SS2'),
+(3, 'SS3'),
+(4, 'SS4'),
+(5, 'SS5'),
+(6, 'SS6'),
+(7, 'SS7'),
+(8, 'SS8'),
+(9, 'SS9'),
+(10, 'SS10'),
+(1, 'SS2'), -- Additional to meet 10 entries requirement
+(2, 'SS3'),
+(3, 'SS4'),
+(4, 'SS5'),
+(5, 'SS6');
+
+INSERT INTO tbl_subject (code, title, sem, credits) VALUES
+('CS101', 'Introduction to Programming', 1, 4),
+('CS102', 'Data Structures', 2, 4),
+('CS103', 'Algorithms', 3, 4),
+('CS104', 'Operating Systems', 4, 4),
+('CS105', 'Database Systems', 5, 4),
+('CS106', 'Computer Networks', 6, 4),
+('CS107', 'Software Engineering', 7, 4),
+('CS108', 'Web Development', 8, 4),
+('CS109', 'Machine Learning', 9, 4),
+('CS110', 'Artificial Intelligence', 10, 4);
+
+INSERT INTO tbl_marks (usn, code, ssid, test1, test2, test3, finalMarks) VALUES
+(1, 'CS101', 'SS1', 85, 90, 88, 90),
+(2, 'CS102', 'SS2', 75, 80, 78, 82),
+(3, 'CS103', 'SS3', 65, 70, 68, 72),
+(4, 'CS104', 'SS4', 85, 80, 88, 86),
+(5, 'CS105', 'SS5', 95, 90, 98, 92),
+(6, 'CS106', 'SS6', 75, 70, 78, 74),
+(7, 'CS107', 'SS7', 85, 90, 88, 84),
+(8, 'CS108', 'SS8', 95, 100, 98, 96),
+(9, 'CS109', 'SS9', 55, 60, 58, 62),
+(10, 'CS110', 'SS10', 75, 80, 78, 82);
+
+INSERT INTO tbl_marks (usn, code, ssid, test1, test2, test3, finalMarks) VALUES
+(1, 'CS102', 'SS1', 81, 90, 88, 90),
+(1, 'CS103', 'SS2', 75, 85, 78, 82),
+(1, 'CS104', 'SS1', 88, 92, 90, 91),
+(1, 'CS105', 'SS1', 90, 93, 95, 94),
+(1, 'CS106', 'SS1', 85, 87, 89, 88),
+(1, 'CS107', 'SS1', 78, 80, 82, 81),
+(1, 'CS108', 'SS1', 92, 90, 88, 91),
+(1, 'CS109', 'SS1', 94, 96, 95, 95),
+(1, 'CS110', 'SS1', 88, 87, 89, 88);
+
+

@@ -1,0 +1,179 @@
+create table tbl_book(
+book_id integer primary key,
+title varchar(200) not null,
+pub_name varchar(200) not null,
+pub_year year
+);
+
+create table tbl_book_auth(
+book_id integer,
+author_name varchar(200) not null
+);
+
+create table tbl_pub(
+name varchar(200) not null primary key,
+address varchar(200) not null,
+phone varchar(12) not null
+);
+
+create table tbl_copies(
+book_id integer,
+branch_id integer,
+copies integer
+);
+
+create table tbl_lending(
+book_id integer,
+branch_id integer,
+card_no integer,
+date_out date,
+due_date date
+);
+
+create table tbl_branch(
+branch_id integer primary key,
+branch_name varchar(200) not null,
+address varchar(200) not null
+);
+
+
+
+alter table tbl_book 
+add constraint fk1
+foreign key (pub_name) references tbl_pub(name);
+
+alter table tbl_book_auth
+add constraint fk2
+foreign key (book_id) references tbl_book(book_id);
+
+alter table tbl_copies
+add constraint fk3
+foreign key (book_id) references tbl_book(book_id);
+
+alter table tbl_copies
+add constraint fk4
+foreign key (branch_id) references tbl_branch(branch_id);
+
+alter table tbl_lending
+add constraint fk5
+foreign key (book_id) references tbl_book(book_id);
+
+alter table tbl_lending
+add constraint fk6
+foreign key (branch_id) references tbl_branch(branch_id);
+
+insert into tbl_pub(name, address, phone)
+values 
+("PQR", "Bangalore - 61", 1234),
+("ABC", "Chennai - 77", 5678),
+("XYZ", "Mangalore - 99", 1357);
+
+
+insert into tbl_book (book_id, title, pub_name, pub_year)
+values 
+(1, "introduction to DBMS", "ABC", 2003),
+(2, "Beginners guide to C programming language", "XYZ", 1997),
+(3, "Haskell Programming basics", "PQR", 2012),
+(4, "tally prime 2012", "ABC", 2012),
+(5, "tablue beginners guide", "XYZ", 2017);
+
+insert into tbl_book_auth (book_id, author_name)
+values 
+(1, "Adarsh"),
+(2, "Arun"),
+(3, "Anusha"),
+(4, "Anusha"),
+(5, "Priya");
+
+insert into tbl_branch (branch_id, branch_name, address)
+values 
+(1, "B-1", "South Block"),
+(2, "B-2", "East Block");
+
+insert into tbl_copies (book_id, branch_id, copies)
+values
+(1, 1, 23),
+(2, 1, 11),
+(2, 1, 17),
+(3, 1, 44),
+(3, 2, 2),
+(4, 1, 10),
+(5, 1, 11),
+(1, 2, 10),
+(2, 2, 0),
+(4, 2, 0),
+(5, 2, 0);
+
+insert into tbl_lending (book_id, branch_id, card_no, date_out, due_date)
+values 
+(1, 1, 1001, '2024-01-10', '2024-01-29'),
+(1, 2, 1002, '2024-02-01', '2024-02-13'),
+(5, 1, 1003, '2024-02-07', '2024-02-23'),
+(1, 1, 1004, '2024-03-12', '2024-03-17'),
+(3, 2, 1005, '2024-03-13', '2024-03-20');
+
+insert into tbl_lending (book_id, branch_id, card_no, date_out, due_date)
+values 
+(1, 1, 1001, '2024-03-10', '2024-03-29'),
+(1, 2, 1002, '2024-03-01', '2024-03-13'),
+
+insert into tbl_lending (book_id, branch_id, card_no, date_out, due_date)
+values 
+(2, 1, 1001, '2024-02-10', '2024-02-29');
+
+insert into tbl_copies (book_id, branch_id, copies)
+values
+(1, 2, 10),
+(2, 2, 0),
+(4, 2, 0),
+(5, 2, 0);
+
+
+
+select B.book_id, C.title, C.pub_name, D.author_name, B.copies
+from tbl_copies B, tbl_book C,  tbl_book_auth D
+where C.book_id = B.book_id and D.book_id = B.book_id;
+
+select T.book_id, 
+group_concat(T.card_no),
+count (*) as times_issued
+from tbl_lending T
+where date_out between '2024-01-01' and '2024-03-30';
+group by T.book_id
+having count (*) > 1;
+
+select A.book_id, B.title, B.pub_name, D.address,D.phone
+from tbl_copies A, tbl_book B, tbl_book_auth C, tbl_pub D
+where A.book_id = B.book_id and A.book_id = C.book_id and B.pub_name = D.name and A.copies > 0;
+
+select A.title, A.pub_name, B.address, B.phone, C.author_name, D.branch_id, D.copies
+from tbl_book A, tbl_pub B, tbl_book_auth C, tbl_copies D
+where A.pub_name = B.name and A.book_id = C.book_id and A.book_id = D.book_id and D.copies > 0;
+
+select A.title, A.pub_name, B.address, B.phone, C.author_name, D.branch_id, D.copies
+from tbl_book A
+join tbl_pub B on A.pub_name = B.name
+join tbl_book_auth C on A.book_id = C.book_id
+join tbl_copies D on A.book_id = D.book_id
+where D.copies > 0;
+
+select A.book_id, A.title, A.pub_name, B.address, B.phone, A.pub_year
+from tbl_book A
+join tbl_pub B on A.pub_name = B.name
+where A.pub_year > 2010;
+
+select A.book_id, A.title, A.pub_name, B.address, B.phone, A.pub_year
+from tbl_book A, tbl_pub B
+where A.pub_name = B.name and A.pub_year > 2010;
+
+select A.book_id, count(*) as times_issued
+from tbl_lending A
+where A.date_out between '2024-01-01' and '2024-03-30'
+group by A.book_id
+having count(*) > 1;
+
+create view v_tbl_available as
+select A.book_id, A.branch_id as book_available_at, B.title
+from tbl_copies A
+join tbl_book B on A.book_id = B.book_id
+where A.copies > 0;

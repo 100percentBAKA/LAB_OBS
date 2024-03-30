@@ -1,0 +1,149 @@
+create table tbl_actor(
+id integer primary key,
+name varchar(100) not null,
+phone varchar(12)
+);
+
+create table tbl_dir (
+id integer primary key,
+name varchar(100) not null,
+phone varchar(12)
+);
+
+create table tbl_movie (
+id integer primary key,
+title varchar(200) not null unique,
+year year,
+lang varchar(100) not null,
+dir_id integer
+);
+
+create table tbl_cast (
+act_id integer,
+mov_id integer,
+role varchar(100) not null
+);
+
+create table tbl_rating (
+mov_id integer,
+stars integer
+);
+
+alter table tbl_movie 
+add constraint fk_1
+foreign key (dir_id) references tbl_dir(id) on delete cascade on update cascade;
+
+alter table tbl_cast 
+add constraint fk_2
+foreign key (act_id) references tbl_actor(id) on delete cascade on update cascade;
+
+alter table tbl_cast 
+add constraint fk_3
+foreign key (mov_id) references tbl_movie(id) on delete cascade on update cascade;
+
+alter table tbl_rating 
+add constraint fk_4
+foreign key (mov_id) references tbl_movie(id) on delete cascade on update cascade;
+
+INSERT INTO tbl_actor (id, name, phone) VALUES
+(1, 'Leonardo DiCaprio', '555-0101'),
+(2, 'Kate Winslet', '555-0102'),
+(3, 'Brad Pitt', '555-0103'),
+(4, 'Angelina Jolie', '555-0104'),
+(5, 'Tom Hanks', '555-0105'),
+(6, 'Natalie Portman', '555-0106'),
+(7, 'Morgan Freeman', '555-0107'),
+(8, 'Scarlett Johansson', '555-0108');
+
+INSERT INTO tbl_dir (id, name, phone) VALUES
+(1, 'Christopher Nolan', '1987654321'),
+(2, 'Quentin Tarantino', '1987654322'),
+(3, 'Martin Scorsese', '1987654323'),
+(4, 'Steven Spielberg', '1987654324'),
+(5, 'Ridley Scott', '1987654325'),
+(6, 'James Cameron', '1987654326'),
+(7, 'Tim Burton', '1987654327'),
+(8, 'Wes Anderson', '1987654328');
+
+INSERT INTO tbl_movie (id, title, year, lang, dir_id) VALUES
+(1, 'Inception', 2010, 'English', 1),
+(2, 'Pulp Fiction', 1994, 'English', 2),
+(3, 'The Wolf of Wall Street', 2013, 'English', 3),
+(4, 'Jurassic Park', 1993, 'English', 4),
+(5, 'The Martian', 2015, 'English', 5),
+(6, 'Avatar', 2009, 'English', 6),
+(7, 'Edward Scissorhands', 1990, 'English', 7),
+(8, 'The Grand Budapest Hotel', 2014, 'English', 8),
+(9, 'The Grand', 2016, 'English', 3);
+
+INSERT INTO tbl_cast (act_id, mov_id, role) VALUES
+(1, 1, 'Dom Cobb'),
+(2, 2, 'Vincent Vega'),
+(3, 3, 'Jordan Belfort'),
+(4, 4, 'Dr. Alan Grant'),
+(5, 5, 'Mark Watney'),
+(6, 6, 'Jake Sully'),
+(7, 7, 'Edward Scissorhands'),
+(8, 8, 'M. Gustave'),
+(1, 2, 'Jules Winnfield'),
+(2, 3, 'Donnie Azoff'),
+(3, 4, 'Ian Malcolm'),
+(4, 5, 'Teddy Sanders'),
+(5, 6, 'Neytiri'),
+(6, 7, 'Kim Boggs'),
+(7, 8, 'Zero Moustafa'),
+(7, 9, 'Zero');
+
+
+INSERT INTO tbl_rating (mov_id, stars) VALUES
+(1, 5),
+(2, 5),
+(3, 1),
+(4, 5),
+(5, 2),
+(6, 5),
+(7, 4),
+(8, 3),
+(9, 1);
+
+INSERT INTO tbl_rating (mov_id, stars) VALUES
+(1, 2),
+(2, 3),
+(3, 5),
+(4, 5),
+(5, 3),
+(6, 4),
+(7, 1),
+(8, 3),
+(9, 2);
+
+select A.title, A.year
+from tbl_movie A
+join tbl_dir B on A.dir_id = B.id
+where B.name = 'Martin Scorsese';
+
+select B.title
+from tbl_cast A
+join tbl_movie B on A.mov_id = B.id
+group by B.title
+having count(*) > 1;
+
+select B.name
+from tbl_cast A
+join tbl_actor B on A.act_id = B.id
+join tbl_movie C on A.mov_id = C.id
+where C.year between 2000 and 2015;
+
+select mov_id, max(stars)
+from tbl_rating
+group by mov_id;
+
+create view v_4 as
+select A.name, B.title, C.stars
+from tbl_dir A
+join tbl_movie B on B.dir_id = A.id
+join tbl_rating C on B.id = C.mov_id;
+
+update v_4
+set stars = 5
+where name = 'Martin Scorsese';
